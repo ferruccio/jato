@@ -2,6 +2,7 @@
 
 #include <esent.h>
 
+#include <functional>
 #include <stdexcept>
 #include <string>
 
@@ -20,6 +21,10 @@ namespace jet {
         JET_ERR _code;
         const char* _origin;
     };
+
+    using warning_handler = std::function < void(JET_ERR code, const char* origin) >;
+
+    auto set_warning_handler(warning_handler handler) -> warning_handler;
 
     void attach_database(JET_SESID session, const string& filename);
     auto begin_session(JET_INSTANCE instance) -> JET_SESID;
