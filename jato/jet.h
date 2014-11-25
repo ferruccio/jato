@@ -5,6 +5,7 @@
 #include <functional>
 #include <stdexcept>
 #include <string>
+#include <tuple>
 
 namespace jet {
 
