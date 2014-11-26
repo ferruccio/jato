@@ -8,6 +8,7 @@ namespace jet {
     using std::string;
     using std::tuple;
     using std::make_tuple;
+    using std::vector;
 
     namespace {
         warning_handler handle_warning;
@@ -382,10 +383,36 @@ namespace jet {
         return make_tuple(enum_column_count, enum_column);
     }
 
+    // escrow_udpate()
+
+    // external_restore()
+
+    void free_buffer(char* buffer) {
+        handle_errors(
+            "jet::free_buffer",
+            JetFreeBuffer(buffer));
+    }
+
+    // get_attach_info
+
+    // get_attach_info_instance
+
     void init(JET_INSTANCE& instance) {
         handle_errors(
             "jet::init",
             JetInit(&instance));
+    }
+
+    auto get_bookmark(JET_SESID session, JET_TABLEID table) -> vector < char > {
+        unsigned long actual_size = 0;
+        handle_errors(
+            "jet::get_bookmark(1)",
+            JetGetBookmark(session, table, NULL, 0, &actual_size));
+        vector<char> bookmark(actual_size);
+        handle_errors(
+            "jet::get_bookmark(2)",
+            JetGetBookmark(session, table, bookmark.data(), bookmark.size(), nullptr));
+        return bookmark;
     }
 
     auto open_database(JET_SESID session, const string& filename) -> JET_DBID {

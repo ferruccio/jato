@@ -6,10 +6,12 @@
 #include <stdexcept>
 #include <string>
 #include <tuple>
+#include <vector>
 
 namespace jet {
 
     using std::string;
+    using std::vector;
 
     class error : public std::runtime_error {
     public:
