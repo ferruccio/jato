@@ -5,6 +5,11 @@ VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jato", "jato.vcxproj", "{D60205AF-C562-4486-9DE6-DF7FCE8C240E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jato.tests", "..\jato.tests\jato.tests.vcxproj", "{252C4476-25A2-4D54-93E8-83E439E60D4D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D60205AF-C562-4486-9DE6-DF7FCE8C240E} = {D60205AF-C562-4486-9DE6-DF7FCE8C240E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +26,13 @@ Global
 		{D60205AF-C562-4486-9DE6-DF7FCE8C240E}.Release|Win32.Build.0 = Release|Win32
 		{D60205AF-C562-4486-9DE6-DF7FCE8C240E}.Release|x64.ActiveCfg = Release|x64
 		{D60205AF-C562-4486-9DE6-DF7FCE8C240E}.Release|x64.Build.0 = Release|x64
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Debug|Win32.Build.0 = Debug|Win32
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Debug|x64.ActiveCfg = Debug|x64
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Debug|x64.Build.0 = Debug|x64
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Release|Win32.ActiveCfg = Release|Win32
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Release|Win32.Build.0 = Release|Win32
+		{252C4476-25A2-4D54-93E8-83E439E60D4D}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

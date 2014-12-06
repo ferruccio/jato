@@ -14,6 +14,7 @@ namespace jet {
     using std::make_shared;
     using std::shared_ptr;
     using std::string;
+    using std::tuple;
     using std::vector;
 
     class error : public std::runtime_error {
@@ -32,21 +33,63 @@ namespace jet {
 
     auto set_warning_handler(warning_handler handler) -> warning_handler;
 
-    void attach_database(JET_SESID session, const string& filename);
-    auto begin_session(JET_INSTANCE instance) -> JET_SESID;
-    void close_database(JET_SESID session, JET_DBID db);
+    auto add_column(JET_SESID session, JET_TABLEID table, const string& columnname,
+        JET_COLUMNDEF* column_def, void* def_value, unsigned long dv_size)->JET_COLUMNID;
+
+    void attach_database(JET_SESID session, const string& filename, JET_GRBIT bits);
+    void attach_database(JET_SESID session, const string& filename, unsigned long db_maxsize, JET_GRBIT bits);
+    auto begin_session(JET_INSTANCE instance)->JET_SESID;
+    auto begin_session(JET_INSTANCE instance, const string& username, const string& password)->JET_SESID;
+    void begin_transaction(JET_SESID session);
+    void begin_transaction(JET_SESID session, JET_GRBIT bits);
+    void close_database(JET_SESID session, JET_DBID db, JET_GRBIT bits);
     void close_table(JET_SESID session, JET_TABLEID table);
-    auto create_database(JET_SESID session, const string& filename) -> JET_DBID;
-    auto create_instance(const string& instance_name) -> JET_INSTANCE;
-    auto create_table(JET_SESID session, JET_DBID db, const string& tablename) -> JET_TABLEID;
+    void commit_transaction(JET_SESID session, JET_GRBIT bits);
+    auto create_database(JET_SESID session, const string& filename)->JET_DBID;
+    auto create_database(JET_SESID session, const string& filename, const string& connect, JET_GRBIT bits)->JET_DBID;
+    auto create_database(JET_SESID session, const string& filename, unsigned long max_size, JET_GRBIT bits)->JET_DBID;
+    void create_index(JET_SESID session, JET_TABLEID table, const string& indexname,
+        JET_GRBIT bits, const string& key, unsigned long density);
+    void create_index(JET_SESID session, JET_TABLEID table,
+        JET_INDEXCREATE* ixcreate, unsigned long ic_size);
+    void create_index(JET_SESID session, JET_TABLEID table,
+        JET_INDEXCREATE2* ixcreate, unsigned long ic_size);
+    auto create_instance(const string& instancename)->JET_INSTANCE;
+    auto create_instance(const string& instancename, const string& displayname, JET_GRBIT bits)->JET_INSTANCE;
+    auto create_table(JET_SESID session, JET_DBID db, const string& tablename)->JET_TABLEID;
+    auto create_table(JET_SESID session, JET_DBID db, const string& tablename,
+        unsigned long pages, unsigned long density)->JET_TABLEID;
+    void create_table_column_index(JET_SESID session, JET_DBID db, JET_TABLECREATE* table_create);
+    void create_table_column_index(JET_SESID session, JET_DBID db, JET_TABLECREATE2* table_create);
+    void create_table_column_index(JET_SESID session, JET_DBID db, JET_TABLECREATE3* table_create);
+    void delete_column(JET_SESID session, JET_TABLEID table, const string& columnname);
+    void delete_column(JET_SESID session, JET_TABLEID table, const string& columnname, JET_GRBIT bits);
+    void delete_index(JET_SESID session, JET_TABLEID table, const string& indexname);
+    void delete_record(JET_SESID session, JET_TABLEID table);
     void delete_table(JET_SESID session, JET_DBID db, const string& tablename);
+    void detach_database(JET_SESID session, const string& filename);
+    void detach_database(JET_SESID session, const string& filename, JET_GRBIT bits);
+    auto dup_cursor(JET_SESID session, JET_TABLEID table, JET_GRBIT bits)->JET_TABLEID;
+    auto dup_session(JET_SESID session)->JET_SESID;
+    auto enable_multi_instance(JET_SETSYSPARAM* sysparam, unsigned long count) -> unsigned long;
+    void end_session(JET_SESID session, JET_GRBIT bits);
     void end_session(JET_SESID session);
+    auto enumerate_columns(
+        JET_SESID session,
+        JET_TABLEID table,
+        unsigned long column,
+        JET_ENUMCOLUMNID* enum_columnid,
+        JET_PFNREALLOC realloc,
+        void* realloc_context,
+        unsigned long data_most,
+        JET_GRBIT bits)->tuple < unsigned long, JET_ENUMCOLUMN* > ;
+    void free_buffer(char* buffer);
     void init(JET_INSTANCE& instance);
-    auto open_database(JET_SESID session, const string& filename) -> JET_DBID;
-    auto open_table(JET_SESID session, JET_DBID db, const string& tablename) -> JET_TABLEID;
+    auto get_bookmark(JET_SESID session, JET_TABLEID table)->vector < char > ;
+    auto open_database(JET_SESID session, const string& filename)->JET_DBID;
+    auto open_table(JET_SESID session, JET_DBID db, const string& tablename)->JET_TABLEID;
     void rename_table(JET_SESID session, JET_DBID db, const string& oldname, const string& newname);
     void term(JET_INSTANCE instance);
-
 
     class instance {
     public:
@@ -122,7 +165,7 @@ namespace jet {
 
         void create_db(const std::string& filename) {
             auto db_id = create_database(session_id, filename);
-            close_database(session_id, db_id);
+            close_database(session_id, db_id, 0);
         }
 
         auto open_db(const std::string& filename)->db_ptr {
@@ -143,7 +186,7 @@ namespace jet {
         db(session_ptr session, const string& filename)
             : session(session), filename(filename) {
 
-            attach_database(session->id(), filename);
+            attach_database(session->id(), filename, 0);
             db_id = open_database(session->id(), filename);
         }
 

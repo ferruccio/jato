@@ -75,12 +75,6 @@ namespace jet {
             JetBeginTransaction2(session, bits));
     }
 
-    void begin_transaction(JET_SESID session, long long txid, JET_GRBIT bits) {
-        handle_errors(
-            "jet::begin_transaction(3)",
-            JetBeginTransaction3(session, txid, bits));
-    }
-
     void close_database(JET_SESID session, JET_DBID db, JET_GRBIT bits) {
         handle_errors(
             "jet::close_database",
@@ -97,14 +91,6 @@ namespace jet {
         handle_errors(
             "jet::commit_transaction(1)",
             JetCommitTransaction(session, bits));
-    }
-
-    auto commit_transaction(JET_SESID session, JET_GRBIT bits, unsigned long duration) -> JET_COMMIT_ID {
-        JET_COMMIT_ID commit;
-        handle_errors(
-            "jet::commit_transaction(2)",
-            JetCommitTransaction2(session, bits, duration, &commit));
-        return commit;
     }
 
     auto create_database(JET_SESID session, const string& filename) -> JET_DBID {
