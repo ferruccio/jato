@@ -92,8 +92,19 @@ namespace jato {
 
     using database_ptr = unique_ptr < interface::Database >;
 
-    void create_database(const sys::path& path);
+    namespace interface {
+        struct Session {
+            virtual ~Session() {}
+
+            virtual void create_database(const sys::path& path) = 0;
+            virtual auto open_database(const sys::path& path)->database_ptr = 0;
+        };
+    }
+
+    using session_ptr = unique_ptr < interface::Session > ;
+
+    auto make_session()->session_ptr;
+
     void drop_database(const sys::path& path);
-    auto open_database(const sys::path& path)->database_ptr;
 
 }

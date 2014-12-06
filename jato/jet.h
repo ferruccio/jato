@@ -112,14 +112,14 @@ namespace jet {
 
         void init() {
             if (instance_id == 0) {
-                instance_id = create_instance("xyzzy");
+                instance_id = jet::create_instance("xyzzy");
                 jet::init(instance_id);
             }
         }
 
         void shutdown() {
             if (instance_id != 0) {
-                term(instance_id);
+                jet::term(instance_id);
             }
         }
 
