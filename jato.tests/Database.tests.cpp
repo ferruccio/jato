@@ -9,7 +9,7 @@ namespace sys = std::tr2::sys;
 
 struct DatabaseTestFixture {
 
-    sys::path testdb = "C:/tmp/test-database.edb";
+    const sys::path testdb = "C:/tmp/test-database.edb";
 
     DatabaseTestFixture() {
         sys::remove(testdb);

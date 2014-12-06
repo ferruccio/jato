@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <filesystem>
 #include <functional>
 #include <memory>
@@ -13,7 +12,6 @@ namespace jato {
     using std::function;
     using std::string;
     using std::vector;
-    using std::uint32_t;
     using std::unique_ptr;
 
     namespace sys = std::tr2::sys;
