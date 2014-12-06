@@ -63,7 +63,7 @@ namespace jato {
             virtual void delete_field(const string& name) = 0;
             virtual void rename_field(const string& oldname, const string& newname) = 0;
 
-            virtual auto create_record() const->record_ptr = 0;
+            //virtual auto create_record() const->record_ptr = 0;
             virtual void add_record(record_ptr record) = 0;
 
             virtual auto fields() const->vector < FieldDescriptor > = 0;

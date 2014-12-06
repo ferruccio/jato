@@ -25,6 +25,7 @@
   <ItemGroup>
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="jet.cpp" />
+    <ClCompile Include="Table.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D60205AF-C562-4486-9DE6-DF7FCE8C240E}</ProjectGuid>
