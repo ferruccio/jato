@@ -21,7 +21,8 @@ namespace jato {
                 action();
             } catch (jet::error& ex) {
                 std::stringstream ss;
-                ss << "Jet Error(" << ex.origin() << ") code=" << ex.code();
+                ss << "Jet Error [" << ex.origin()
+                   << "] code=" << ex.code() << " (" << jet::jet_error(ex.code()) << ")";
                 throw jato::error(ss.str());
             }
         }

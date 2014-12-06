@@ -33,6 +33,11 @@ namespace jet {
 
     auto set_warning_handler(warning_handler handler) -> warning_handler;
 
+    auto jet_error(JET_ERR code)->const char*;
+
+    //
+    // jet::* API
+    //
     auto add_column(JET_SESID session, JET_TABLEID table, const string& columnname,
         JET_COLUMNDEF* column_def, void* def_value, unsigned long dv_size)->JET_COLUMNID;
 

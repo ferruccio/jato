@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="esent_errors.h" />
     <ClInclude Include="include\jato.h" />
     <ClInclude Include="jet.h" />
   </ItemGroup>

@@ -1,5 +1,6 @@
 #include "jet.h"
 
+#include <unordered_map>
 #include <string>
 #include <tuple>
 
@@ -8,16 +9,25 @@ namespace jet {
     using std::string;
     using std::tuple;
     using std::make_tuple;
+    using std::unordered_map;
     using std::vector;
 
     namespace {
         warning_handler handle_warning;
+        unordered_map<JET_ERR, const char*> jet_errors = {
+#include "esent_errors.h"
+        };
     }
 
     auto set_warning_handler(warning_handler handler) -> warning_handler {
         auto old_handler = handle_warning;
         handle_warning = handler;
         return old_handler;
+    }
+
+    auto jet_error(JET_ERR code)->const char* {
+        auto it = jet_errors.find(code);
+        return it == jet_errors.end() ? "?" : it->second;
     }
 
     void handle_errors(const char* origin, JET_ERR code) {
