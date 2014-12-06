@@ -47,30 +47,6 @@ namespace jet {
             JetAttachDatabase2(session, filename.c_str(), db_maxsize, bits));
     }
 
-    void backup(const string& backup_path, JET_GRBIT bits, JET_PFNSTATUS status) {
-        handle_errors(
-            "jet::backup",
-            JetBackup(backup_path.c_str(), bits, status));
-    }
-
-    void backup_instance(JET_INSTANCE instance, const string& backup_path, JET_GRBIT bits, JET_PFNSTATUS status) {
-        handle_errors(
-            "jet::backup_instance",
-            JetBackupInstance(instance, backup_path.c_str(), bits, status));
-    }
-
-    void begin_external_backup(JET_GRBIT bits) {
-        handle_errors(
-            "jet::begin_external_backup",
-            JetBeginExternalBackup(bits));
-    }
-
-    void begin_external_backup_instance(JET_INSTANCE instance, JET_GRBIT bits) {
-        handle_errors(
-            "jet::begin_external_backup_instance",
-            JetBeginExternalBackupInstance(instance, bits));
-    }
-
     auto begin_session(JET_INSTANCE instance) -> JET_SESID {
         JET_SESID sesid = 0;
         handle_errors(
@@ -111,18 +87,6 @@ namespace jet {
             JetCloseDatabase(session, db, bits));
     }
 
-    void close_file(JET_HANDLE file) {
-        handle_errors(
-            "jet::close_file",
-            JetCloseFile(file));
-    }
-
-    void close_file_instance(JET_INSTANCE instance, JET_HANDLE file) {
-        handle_errors(
-            "jet::close_file_instance",
-            JetCloseFileInstance(instance, file));
-    }
-
     void close_table(JET_SESID session, JET_TABLEID table) {
         handle_errors(
             "jet::close_table",
@@ -141,19 +105,6 @@ namespace jet {
             "jet::commit_transaction(2)",
             JetCommitTransaction2(session, bits, duration, &commit));
         return commit;
-    }
-
-    void compact(JET_SESID session, const string& src, const string& dst,
-        JET_PFNSTATUS status, JET_CONVERT* convert, JET_GRBIT bits) {
-        handle_errors(
-            "jet::compact",
-            JetCompact(session, src.c_str(), dst.c_str(), status, convert, bits));
-    }
-
-    void compute_stats(JET_SESID session, JET_TABLEID table) {
-        handle_errors(
-            "jet::compute_stats",
-            JetComputeStats(session, table));
     }
 
     auto create_database(JET_SESID session, const string& filename) -> JET_DBID {
@@ -185,7 +136,7 @@ namespace jet {
         handle_errors(
             "jet::create_index(1)",
             JetCreateIndex(session, table, indexname.c_str(), bits,
-            key.c_str(), key.length(), density));
+            key.c_str(), static_cast<unsigned long>(key.length()), density));
     }
 
     void create_index(JET_SESID session, JET_TABLEID table,
@@ -251,20 +202,6 @@ namespace jet {
         handle_errors(
             "jet::create_table_column_index(3)",
             JetCreateTableColumnIndex3(session, db, table_create));
-    }
-
-    void defragment(JET_SESID session, JET_DBID db, const string& tablename,
-        unsigned long* passes, unsigned long* seconds, JET_GRBIT bits) {
-        handle_errors(
-            "jet::defragment(1)",
-            JetDefragment(session, db, tablename.c_str(), passes, seconds, bits));
-    }
-
-    void defragment(JET_SESID session, JET_DBID db, const string& tablename,
-        unsigned long* passes, unsigned long* seconds, JET_CALLBACK callback, JET_GRBIT bits) {
-        handle_errors(
-            "jet::defragment(2)",
-            JetDefragment2(session, db, tablename.c_str(), passes, seconds, callback, bits));
     }
 
     void delete_column(JET_SESID session, JET_TABLEID table, const string& columnname) {
@@ -333,24 +270,6 @@ namespace jet {
         return set_succeed;
     }
 
-    void end_external_backup() {
-        handle_errors(
-            "jet::end_external_backup",
-            JetEndExternalBackup());
-    }
-
-    void end_external_backup_instance(JET_INSTANCE instance) {
-        handle_errors(
-            "jet::end_external_backup_instance(1)",
-            JetEndExternalBackupInstance(instance));
-    }
-
-    void end_external_backup_instance(JET_INSTANCE instance, JET_GRBIT bits) {
-        handle_errors(
-            "jet::end_external_backup_instance(2)",
-            JetEndExternalBackupInstance2(instance, bits));
-    }
-
     void end_session(JET_SESID session, JET_GRBIT bits) {
         handle_errors(
             "jet::end_session",
@@ -383,19 +302,11 @@ namespace jet {
         return make_tuple(enum_column_count, enum_column);
     }
 
-    // escrow_udpate()
-
-    // external_restore()
-
     void free_buffer(char* buffer) {
         handle_errors(
             "jet::free_buffer",
             JetFreeBuffer(buffer));
     }
-
-    // get_attach_info
-
-    // get_attach_info_instance
 
     void init(JET_INSTANCE& instance) {
         handle_errors(
@@ -411,7 +322,7 @@ namespace jet {
         vector<char> bookmark(actual_size);
         handle_errors(
             "jet::get_bookmark(2)",
-            JetGetBookmark(session, table, bookmark.data(), bookmark.size(), nullptr));
+            JetGetBookmark(session, table, bookmark.data(), static_cast<unsigned long>(bookmark.size()), nullptr));
         return bookmark;
     }
 

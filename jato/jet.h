@@ -4,12 +4,15 @@
 
 #include <functional>
 #include <stdexcept>
+#include <memory>
 #include <string>
 #include <tuple>
 #include <vector>
 
 namespace jet {
 
+    using std::make_shared;
+    using std::shared_ptr;
     using std::string;
     using std::vector;
 
@@ -44,4 +47,118 @@ namespace jet {
     void rename_table(JET_SESID session, JET_DBID db, const string& oldname, const string& newname);
     void term(JET_INSTANCE instance);
 
+
+    class instance {
+    public:
+        instance() {
+            init();
+        }
+
+        instance(const instance&) = delete;
+        instance(const instance&&) = delete;
+
+        ~instance() {
+            try {
+                shutdown();
+            } catch (error&) {
+                // TODO: log it?
+            }
+        }
+
+        auto operator=(const instance&)->instance& = delete;
+
+        void init() {
+            if (instance_id == 0) {
+                instance_id = create_instance("xyzzy");
+                jet::init(instance_id);
+            }
+        }
+
+        void shutdown() {
+            if (instance_id != 0) {
+                term(instance_id);
+            }
+        }
+
+        auto id() const->JET_INSTANCE { return instance_id; }
+
+    private:
+        JET_INSTANCE instance_id = 0;
+    };
+
+    using instance_ptr = shared_ptr < instance >;
+
+    class db;
+    using db_ptr = shared_ptr < db >;
+
+    class session : public std::enable_shared_from_this < session > {
+    public:
+        explicit session(instance_ptr instance) : instance(instance) {}
+
+        session(const session&) = delete;
+        session(const session&&) = delete;
+
+        ~session() {
+            try {
+                end();
+            } catch (error&) {
+                // TODO: log it?
+            }
+        }
+
+        auto operator=(const session&)->session& = delete;
+
+        void begin() {
+            if (session_id == 0) {
+                session_id = begin_session(instance->id());
+            }
+        }
+
+        void end() {
+            if (session_id != 0) {
+                end_session(session_id);
+            }
+        }
+
+        void create_db(const std::string& filename) {
+            auto db_id = create_database(session_id, filename);
+            close_database(session_id, db_id);
+        }
+
+        auto open_db(const std::string& filename)->db_ptr {
+            return make_shared<db>(shared_from_this(), filename);
+        }
+
+        auto id()->JET_SESID { return session_id; }
+
+    private:
+        instance_ptr instance;
+        JET_SESID session_id = 0;
+    };
+
+    using session_ptr = shared_ptr < session >;
+
+    class db {
+    public:
+        db(session_ptr session, const string& filename)
+            : session(session), filename(filename) {
+
+            attach_database(session->id(), filename);
+            db_id = open_database(session->id(), filename);
+        }
+
+        db(const db&) = delete;
+        db(const db&&) = delete;
+        
+        ~db() {}
+
+        auto operator=(const db&)->db& = delete;
+
+        auto id() const->JET_DBID { return db_id; }
+
+    private:
+        string filename;
+        session_ptr session;
+        JET_DBID db_id = 0;
+    };
 }
