@@ -25,7 +25,7 @@ namespace jet {
         return old_handler;
     }
 
-    auto jet_error(JET_ERR code)->const char* {
+    auto jet_error(JET_ERR code) -> const char* {
         auto it = jet_errors.find(code);
         return it == jet_errors.end() ? "?" : it->second;
     }
@@ -36,8 +36,14 @@ namespace jet {
         if (handle_warning) handle_warning(code, origin);
     }
 
-    auto add_column(JET_SESID session, JET_TABLEID table, const string& columnname,
-        JET_COLUMNDEF* column_def, void* def_value, unsigned long dv_size) -> JET_COLUMNID {
+    auto add_column(
+        JET_SESID session,
+        JET_TABLEID table, 
+        const string& columnname,
+        JET_COLUMNDEF* column_def, 
+        void* def_value, 
+        unsigned long dv_size
+    ) -> JET_COLUMNID {
         JET_COLUMNID column = 0;
         handle_errors(
             "jet::add_column",
@@ -127,8 +133,14 @@ namespace jet {
         return db;
     }
 
-    void create_index(JET_SESID session, JET_TABLEID table, const string& indexname,
-        JET_GRBIT bits, const string& key, unsigned long density) {
+    void create_index(
+        JET_SESID session, 
+        JET_TABLEID table, 
+        const string& indexname,
+        JET_GRBIT bits, 
+        const string& key, 
+        unsigned long density
+    ) {
         handle_errors(
             "jet::create_index(1)",
             JetCreateIndex(session, table, indexname.c_str(), bits,
@@ -286,8 +298,8 @@ namespace jet {
         JET_PFNREALLOC realloc,
         void* realloc_context,
         unsigned long data_most,
-        JET_GRBIT bits) -> tuple < unsigned long, JET_ENUMCOLUMN* >
-    {
+        JET_GRBIT bits
+    ) -> tuple < unsigned long, JET_ENUMCOLUMN* > {
         unsigned long enum_column_count = 0;
         JET_ENUMCOLUMN* enum_column = nullptr;
         handle_errors(
@@ -310,7 +322,7 @@ namespace jet {
             JetInit(&instance));
     }
 
-    auto get_bookmark(JET_SESID session, JET_TABLEID table) -> vector < char > {
+    auto get_bookmark(JET_SESID session, JET_TABLEID table) -> vector<char> {
         unsigned long actual_size = 0;
         handle_errors(
             "jet::get_bookmark(1)",

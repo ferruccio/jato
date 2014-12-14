@@ -30,11 +30,11 @@ namespace jato {
 
         }
 
-        auto fields() const->vector < FieldDescriptor > final override {
+        auto fields() const -> vector<FieldDescriptor> final override {
             return vector<FieldDescriptor>();
         }
 
-        void foreach_record(function<auto(record_ptr)->bool> action) final override {
+        void foreach_record(function< auto(record_ptr) -> bool > action) final override {
 
         }
 
@@ -52,7 +52,8 @@ namespace jato {
 
     auto make_table(jet::instance_ptr instance,
         jet::session_ptr session,
-        JET_TABLEID table_id)->table_ptr {
+        JET_TABLEID table_id
+    ) -> table_ptr {
         return make_unique<table_impl>(instance, session, table_id);
     }
 

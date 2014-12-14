@@ -25,7 +25,7 @@ namespace jato {
         }
 
         template <typename T>
-        auto jet_function(function<auto() -> T> fn) -> T {
+        auto jet_function(function< auto() -> T > fn) -> T {
             try {
                 return fn();
             } catch (jet::error& ex) {
@@ -33,7 +33,7 @@ namespace jato {
             }
         }
 
-        void jet_action(function<void()> action) {
+        void jet_action(function< void() > action) {
             try {
                 action();
             } catch (jet::error& ex) {
@@ -45,11 +45,11 @@ namespace jato {
 
     auto make_table(jet::instance_ptr instance,
         jet::session_ptr session,
-        JET_TABLEID table_id)->table_ptr;
+        JET_TABLEID table_id) -> table_ptr;
 
     class database_impl : public interface::Database {
     public: // interface
-        void transaction(function<void()> action) final override {}
+        void transaction(function< void() > action) final override {}
 
         void create_table(const string& tablename) final override {
             jet_action([&](){
@@ -64,7 +64,7 @@ namespace jato {
             });
         }
 
-        auto open_table(const string& tablename)->table_ptr final override {
+        auto open_table(const string& tablename) -> table_ptr final override {
             return jet_function<table_ptr>([&](){
                 JET_TABLEID table_id = 0;
                 table_id = jet::open_table(session->id(), data->id(), tablename);
@@ -78,7 +78,7 @@ namespace jato {
             });
         }
 
-        auto tables() const->vector < TableDescriptor > final override {
+        auto tables() const -> vector<TableDescriptor> final override {
             return vector<TableDescriptor>();
         }
 
@@ -114,7 +114,7 @@ namespace jato {
             });
         }
 
-        auto open_database(const sys::path& path)->database_ptr final override {
+        auto open_database(const sys::path& path) -> database_ptr final override {
             return jet_function<database_ptr>([&](){
                 unique_ptr<database_impl> database;
                 session->begin();
@@ -129,7 +129,7 @@ namespace jato {
         jet::session_ptr session;
     };
 
-    auto make_session()->session_ptr {
+    auto make_session() -> session_ptr {
         return make_unique<session_impl>();
     }
 
