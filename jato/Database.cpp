@@ -16,16 +16,31 @@ namespace jato {
     namespace sys = std::tr2::sys;
 
     namespace {
-        void jet_context(function<void()> action) {
+
+        auto map_exception(jet::error& ex) -> jato::error {
+            std::stringstream ss;
+            ss << "Jet Error [" << ex.origin()
+                << "] code=" << ex.code() << " (" << jet::jet_error(ex.code()) << ")";
+            return jato::error(ss.str());
+        }
+
+        template <typename T>
+        auto jet_function(function<auto() -> T> fn) -> T {
+            try {
+                return fn();
+            } catch (jet::error& ex) {
+                throw map_exception(ex);
+            }
+        }
+
+        void jet_action(function<void()> action) {
             try {
                 action();
             } catch (jet::error& ex) {
-                std::stringstream ss;
-                ss << "Jet Error [" << ex.origin()
-                   << "] code=" << ex.code() << " (" << jet::jet_error(ex.code()) << ")";
-                throw jato::error(ss.str());
+                throw map_exception(ex);
             }
         }
+
     }
 
     auto make_table(jet::instance_ptr instance,
@@ -37,28 +52,28 @@ namespace jato {
         void transaction(function<void()> action) final override {}
 
         void create_table(const string& tablename) final override {
-            jet_context([&](){
+            jet_action([&](){
                 auto table_id = jet::create_table(session->id(), data->id(), tablename);
                 jet::close_table(session->id(), table_id);
             });
         }
 
         void delete_table(const string& tablename) final override {
-            jet_context([&](){
+            jet_action([&](){
                 jet::delete_table(session->id(), data->id(), tablename);
             });
         }
 
         auto open_table(const string& tablename)->table_ptr final override {
-            JET_TABLEID table_id = 0;
-            jet_context([&](){
+            return jet_function<table_ptr>([&](){
+                JET_TABLEID table_id = 0;
                 table_id = jet::open_table(session->id(), data->id(), tablename);
+                return make_table(instance, session, table_id);
             });
-            return make_table(instance, session, table_id);
         }
 
         void rename_table(const string& oldname, const string& newname) final override {
-            jet_context([&](){
+            jet_action([&](){
                 jet::rename_table(session->id(), data->id(), oldname, newname);
             });
         }
@@ -94,19 +109,19 @@ namespace jato {
 
     public: // interface
         void create_database(const sys::path& path) final override {
-            jet_context([&](){
+            jet_action([&](){
                 session->create_db(path);
             });
         }
 
         auto open_database(const sys::path& path)->database_ptr final override {
-            unique_ptr<database_impl> database;
-            jet_context([&](){
+            return jet_function<database_ptr>([&](){
+                unique_ptr<database_impl> database;
                 session->begin();
                 database = make_unique<database_impl>(instance, session);
                 database->open(path);
+                return move(database);
             });
-            return move(database);
         }
 
     private:

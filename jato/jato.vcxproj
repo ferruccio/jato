@@ -22,6 +22,7 @@
     <ClInclude Include="esent_errors.h" />
     <ClInclude Include="include\jato.h" />
     <ClInclude Include="jet.h" />
+    <ClInclude Include="task_list.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Database.cpp" />
