@@ -48,7 +48,7 @@ namespace jato {
 
     // _coltyp values *MUST* match JET_COLTYP values in esent.h
 #define JATO_FIELD_TYPE(_ftype, _type, _coltyp) \
-    struct _ftype : ft_def<_type, 1> { \
+    struct _ftype : ft_def<_type, _coltyp> { \
         _ftype(_type value) : ft_def(value) {} \
     };
 
