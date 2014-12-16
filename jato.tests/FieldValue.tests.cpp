@@ -143,7 +143,7 @@ TEST_CASE("FieldValue (binary_type)") {
 }
 
 TEST_CASE("FieldValue (text_type)") {
-    using T = std::vector<char>;
+    using T = std::string;
     using J = jato::text_type;
 
     T empty;
@@ -151,7 +151,7 @@ TEST_CASE("FieldValue (text_type)") {
     REQUIRE(boost::get<J>(a).type == J::type);
     CHECK(boost::get<J>(a).value == empty);
 
-    T not_empty { 'a', 'b', 'c', 'd' };
+    T not_empty { "non-empty string" };
     jato::FieldValue b { J(not_empty) };
     REQUIRE(boost::get<J>(b).type == J::type);
     CHECK(boost::get<J>(b).value == not_empty);
@@ -173,7 +173,7 @@ TEST_CASE("FieldValue (long_binary_type)") {
 }
 
 TEST_CASE("FieldValue (long_text_type)") {
-    using T = std::vector<char>;
+    using T = std::string;
     using J = jato::long_text_type;
 
     T empty;
@@ -181,7 +181,7 @@ TEST_CASE("FieldValue (long_text_type)") {
     REQUIRE(boost::get<J>(a).type == J::type);
     CHECK(boost::get<J>(a).value == empty);
 
-    T not_empty { 'a', 'b', 'c', 'd' };
+    T not_empty { "non-empty string" };
     jato::FieldValue b { J(not_empty) };
     REQUIRE(boost::get<J>(b).type == J::type);
     CHECK(boost::get<J>(b).value == not_empty);
