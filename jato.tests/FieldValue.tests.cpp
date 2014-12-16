@@ -5,6 +5,8 @@
 
 #include <jato.h>
 
+#include <boost/uuid/uuid_generators.hpp>
+
 TEST_CASE("FieldValue (bit_type)") {
     using T = std::uint8_t;
     using J = jato::bit_type;
@@ -215,6 +217,21 @@ TEST_CASE("FieldValue (long_long_type)") {
     CHECK(boost::get<J>(b).value == max);
 }
 
+TEST_CASE("FieldValue (guid_type)") {
+    using T = boost::uuids::uuid;
+    using J = jato::guid_type;
+
+    const auto nil = boost::uuids::nil_uuid();
+    jato::FieldValue a { J(nil) };
+    REQUIRE(boost::get<J>(a).type == J::type);
+    CHECK(boost::get<J>(a).value.is_nil());
+
+    boost::uuids::string_generator gen;
+    const auto uuid = gen("{01234567-89ab-cdef-0123-456789abcdef}");
+    jato::FieldValue b { J(uuid) };
+    REQUIRE(boost::get<J>(b).type == J::type);
+    CHECK(boost::get<J>(b).value == uuid);
+}
 
 TEST_CASE("FieldValue (ushort_type)") {
     using T = std::uint16_t;
