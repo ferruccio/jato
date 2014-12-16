@@ -42,7 +42,7 @@ namespace jato {
         table_impl(jet::instance_ptr instance, jet::session_ptr session, JET_TABLEID table_id)
             : instance(instance), session(session), table_id(table_id) {}
 
-        auto id()const->JET_TABLEID { return table_id; }
+        auto id() const -> JET_TABLEID { return table_id; }
 
     private:
         jet::instance_ptr instance;

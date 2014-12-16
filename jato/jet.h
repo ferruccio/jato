@@ -100,7 +100,7 @@ namespace jet {
 
     void free_buffer(char* buffer);
     void init(JET_INSTANCE& instance);
-    auto get_bookmark(JET_SESID session, JET_TABLEID table) -> vector < char > ;
+    auto get_bookmark(JET_SESID session, JET_TABLEID table) -> vector<char> ;
     auto open_database(JET_SESID session, const string& filename) -> JET_DBID;
     auto open_table(JET_SESID session, JET_DBID db, const string& tablename) -> JET_TABLEID;
     void rename_table(JET_SESID session, JET_DBID db, const string& oldname, const string& newname);

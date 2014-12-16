@@ -1,11 +1,16 @@
 #pragma once
 
+#include <array>
 #include <filesystem>
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <cstdint>
 #include <string>
 #include <vector>
+
+#include <boost/variant.hpp>
+#include <boost/uuid/uuid.hpp>
 
 namespace jato {
 
@@ -22,7 +27,7 @@ namespace jato {
         explicit error(const char* what) : runtime_error(what) {}
     };
 
-    using field_type = int; // for now
+    using field_type = unsigned long;
 
     struct FieldDescriptor {
         string name;
@@ -33,21 +38,63 @@ namespace jato {
         string name;
     };
 
-    namespace interface {
-        struct Field {
-            virtual ~Field() {}
+    template <typename T, field_type type>
+    class ft_def {
+    public:
+        ft_def(T value) : value(value) {}
+        T value;
+        static const field_type type = type;
+    };
 
-        };
-    }
+    // _coltyp values *MUST* match JET_COLTYP values in esent.h
+#define JATO_FIELD_TYPE(_ftype, _type, _coltyp) \
+    struct _ftype : ft_def<_type, 1> { \
+        _ftype(_type value) : ft_def(value) {} \
+    };
 
-    using field_ptr = unique_ptr<interface::Field>;
+    JATO_FIELD_TYPE(bit_type, std::uint8_t, 1)
+    JATO_FIELD_TYPE(ubyte_type, std::uint8_t, 2)
+    JATO_FIELD_TYPE(short_type, std::int16_t, 3)
+    JATO_FIELD_TYPE(long_type, std::int32_t, 4)
+    JATO_FIELD_TYPE(currency_type, std::int64_t, 5)
+    JATO_FIELD_TYPE(float_type, float, 6)
+    JATO_FIELD_TYPE(double_type, double, 7)
+    JATO_FIELD_TYPE(datetime_type, double, 8)
+    JATO_FIELD_TYPE(binary_type, std::vector<std::uint8_t>, 9)
+    JATO_FIELD_TYPE(text_type, std::vector<char>, 10)
+    JATO_FIELD_TYPE(long_binary_type, std::vector<std::uint8_t>, 11)
+    JATO_FIELD_TYPE(long_text_type, std::vector<char>, 12)
+    JATO_FIELD_TYPE(ulong_long_type, std::uint64_t, 14)
+    JATO_FIELD_TYPE(long_long_type, std::int64_t, 15)
+    JATO_FIELD_TYPE(guid_type, boost::uuids::uuid, 16)
+    JATO_FIELD_TYPE(ushort_type, std::uint16_t, 17)
+
+#undef JATO_FIELD_TYPE
+
+    using FieldValue = boost::variant<
+        bit_type,
+        ubyte_type,
+        short_type,
+        long_type,
+        currency_type,
+        float_type,
+        double_type,
+        datetime_type,
+        binary_type,
+        text_type,
+        long_binary_type,
+        long_text_type,
+        long_long_type,
+        guid_type,
+        ushort_type
+    >;
 
     namespace interface {
         struct Record {
             virtual ~Record() {}
 
-            virtual void set_field(const string& fieldname, field_ptr field) = 0;
-            virtual auto get_field(const string& fieldname) const -> field_ptr = 0;
+            virtual void set_field(const string& fieldname, FieldValue field) = 0;
+            virtual auto get_field(const string& fieldname) const -> FieldValue = 0;
         };
     }
 
