@@ -154,6 +154,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Database.tests.cpp" />
+    <ClCompile Include="FieldValue.tests.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Table.tests.cpp" />
   </ItemGroup>

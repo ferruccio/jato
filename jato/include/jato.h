@@ -41,7 +41,7 @@ namespace jato {
     template <typename T, field_type type>
     class ft_def {
     public:
-        ft_def(T value) : value(value) {}
+        explicit ft_def(T value) : value(value) {}
         T value;
         static const field_type type = type;
     };
@@ -49,7 +49,7 @@ namespace jato {
     // _coltyp values *MUST* match JET_COLTYP values in esent.h
 #define JATO_FIELD_TYPE(_ftype, _type, _coltyp) \
     struct _ftype : ft_def<_type, _coltyp> { \
-        _ftype(_type value) : ft_def(value) {} \
+        explicit _ftype(_type value) : ft_def(value) {} \
     };
 
     JATO_FIELD_TYPE(bit_type, std::uint8_t, 1)
@@ -84,6 +84,7 @@ namespace jato {
         text_type,
         long_binary_type,
         long_text_type,
+        ulong_long_type,
         long_long_type,
         guid_type,
         ushort_type
